@@ -67,4 +67,25 @@ void main() {
       expect(checkInputValidation(name,type3,price,type4),false);
     });
   });
+  group("Test SalesTax ",(){
+    test("test13",(){
+      expect(taxCalculator("raw",10,12.5),15.625);
+    });
+    test("test14",(){
+      expect(taxCalculator("manufactured",12,22.3),39.471000000000004);
+    });
+    test("test15",(){
+      expect(taxCalculator("manufactured",0,0.0),0.0);
+    });
+    test("test16",(){
+      expect(taxCalculator("manufactured",100,1222),18024.5);
+    });
+    test("test17",(){
+      expect(taxCalculator("imported",12,100.0),186.0);
+    });
+    test("test18",(){
+      expect(taxCalculator("imported",0,0.0),0.0);
+    });
+
+  });
 }
