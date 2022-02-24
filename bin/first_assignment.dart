@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:io';
 import 'dart:convert';
+
 //class Item
 class Item{
   String? name;
@@ -25,6 +26,9 @@ class Item{
     this.salesTax=salesTax;
     this.finalPrize=finalPrize;
   }
+  void display(){
+    print("item name: $name\nitem price: $price\nsales tax liability per item: $salesTax\nfinal prize: $finalPrize");
+  }
 }
 //Check variable integer or not
 bool checkInt(var temp){
@@ -47,6 +51,8 @@ dynamic convertDataType(var x){
 
 //Check Input is valid or not
 bool checkInputValidation(var name,var x,var y,var z){
+
+  if(name.length==0){return false;}
   HashMap mp=HashMap<dynamic,dynamic>();
   mp[x.runtimeType]=x;
   mp[y.runtimeType]=y;
@@ -105,7 +111,7 @@ double taxCalculator(String type,int quantity,double price){
   return salesTax;
 }
 void main(){
-  var items=<Item>[];
+  var items = <Item>[];
   String? flag="n";
     do{
       print("Enter the details of item");
@@ -150,6 +156,18 @@ void main(){
           }
        }
        print("Do you want to enter details of any other item (y/n):");
-       flag=stdin.readLineSync();
+       do {
+         flag = stdin.readLineSync();
+         if(flag!=null){
+         flag=flag.toLowerCase();}
+         if(flag!="n" && flag!="y") {
+           print("Wrong option pls select from(y,n)");
+         }
+       }while(flag!="n" && flag!="y");
     }while(flag=="y");
+
+    for(int i=0;i<items.length;i++){
+      print("Item ${i+1}:");
+      items[i].display();
+    }
 }
