@@ -89,5 +89,8 @@ void main() {
     test("test19",(){
       expect(taxCalculator("imported",10,100000.12),155000.186);
     });
+    test("test20",(){
+      expect(taxCalculator("manufactured",10,12.5),18.4375);
+    });
   });
 }
