@@ -66,7 +66,8 @@ void main() {
         //item object insert to items list
         items.add(item);
       } else {
-        throw ValueException();
+        //Invalid input exception throw
+        throw InvalidInputException();
       }
     }
     print("Do you want to enter details of any other item (y/n):");
@@ -76,7 +77,7 @@ void main() {
         flag = flag.toLowerCase();
       }
       if (flag != "n" && flag != "y") {
-        throw ValueException("Wrong option... Please select (y/n)");
+        throw InvalidInputException("Wrong options... Please select (y/n)");
       }
     } while (flag != "n" && flag != "y");
   } while (flag == "y");

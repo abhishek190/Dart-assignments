@@ -1,8 +1,8 @@
-class ValueException implements Exception {
+class InvalidInputException implements Exception {
 
   late String _message;
 
-  ValueException([String message = 'Invalid value']) {
+  InvalidInputException([String message = 'Invalid value']) {
     _message = message;
   }
 
