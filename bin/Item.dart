@@ -1,37 +1,32 @@
 import 'dart:io';
 import '../bin/UserInputValidation.dart';
-import '../bin/exceptionHandle.dart';
-import 'enum.dart';
-import '../bin/factoryClass.dart';
+import '../bin/ExceptionHandle.dart';
+import 'Enum.dart';
+import '../bin/FactoryClass.dart';
 //class Item
-class Item {
+abstract class Item {
   late String name;
-  late double price;
+  late double prize;
   late int quantity;
   late String type;
-  late double salesTax;
-  late double finalPrize;
 
-  //Parametrized Constructor to initialize member variable
-  Item(this.name, this.price, this.quantity, this.type, this.salesTax, this.finalPrize);
+  Item(this.name,this.prize,this.quantity,this.type);
 
-  @override
-  String toString() {
-    // TODO: implement toString
-    return ("item name: $name\nitem price: $price\nsales tax liability per item: $salesTax\nfinal prize: $finalPrize");
-  }
+  double taxCalculator(String type,int quantity,double prize);
+
+  double finalPrizeCalculate(double salesTax, int quantity, double prize);
 
 }
 
 void main() {
-  var items = <Item>[];
+  List<String> item=<String>[];
   String? flag = "n";
   do {
     print("Enter the details of item");
     print("Enter the name of item");
     var name = stdin.readLineSync();
     print(
-        "Price of item\nQuantity of item\nType of item (raw/manufactured/imported)");
+        "Prize of item\nQuantity of item\nType of item (raw/manufactured/imported)");
     var x = stdin.readLineSync();
     var y = stdin.readLineSync();
     var z = stdin.readLineSync();
@@ -43,33 +38,28 @@ void main() {
 
       //Check input is valid or not
       if (checkInputValidation(name, l, m, n)) {
-        double price;
+        double prize;
         int quantity;
         Type type;
 
-        //price , quantity and type assigned with correct dataType
-        price= typeAssign(checkType.double.type,l,m,n,checkType.double.value);
+        //prize , quantity and type assigned with correct dataType
+        prize= typeAssign(checkType.double.type,l,m,n,checkType.double.value);
 
         quantity= typeAssign(checkType.int.type,l,m,n,checkType.int.value);
 
         type= typeAssign(checkType.string.type,l,m,n,checkType.string.value);
 
           //factory class instance
-          final tax = ItemPrice(type);
+          dynamic tax = FactoryClass().itemFactory(type,name,prize,quantity,type.toShortString());
 
           //sales Tax calculate
-          var salesTax = tax.taxCalculator(type.toShortString(), quantity, price);
+          var salesTax = tax.taxCalculator(type.toShortString(), quantity, prize);
 
           //final prize calculate
-          var finalPrize = tax.finalPriceCalculate(salesTax, quantity, price);
+          var finalPrize = tax.finalPrizeCalculate(salesTax, quantity, prize);
 
-          //item object initialize
-          Item item = Item(
-              name, price, quantity, type.toShortString(), salesTax,
-              finalPrize);
+          item.add("item name $name\nitem prize $prize\nsales tax liability per item $salesTax\nfinal prize $finalPrize");
 
-          //item object insert to items list
-          items.add(item);
 
       } else {
         //Invalid input exception throw
@@ -83,14 +73,12 @@ void main() {
         flag = flag.toLowerCase();
       }
       if (flag != "n" && flag != "y") {
-        throw InvalidInputException("Wrong options... Please select (y/n)");
+        print("Wrong options... Please select (y/n)");
       }
     } while (flag != "n" && flag != "y");
   } while (flag == "y");
 
-  //Display all items
-  for (int i = 0; i < items.length; i++) {
-    print("Item ${i + 1}:");
-    print(items[i]);
+  for(int i=0;i<item.length;i++){
+    print(item[i]);
   }
 }

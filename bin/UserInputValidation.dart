@@ -1,5 +1,5 @@
 import 'dart:collection';
-import '../bin/enum.dart';
+import '../bin/Enum.dart';
 //Check variable integer or not
 bool checkInt(var temp) {
   if ((int.tryParse(temp)).toString() == temp) {

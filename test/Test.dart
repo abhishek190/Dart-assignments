@@ -1,7 +1,7 @@
 import "package:test/test.dart";
-import '../bin/factoryClass.dart';
+import '../bin/FactoryClass.dart';
 import '../bin/UserInputValidation.dart';
-import '../bin/enum.dart';
+import '../bin/Enum.dart';
 void main() {
   String test1="01";
   String test2="+123";

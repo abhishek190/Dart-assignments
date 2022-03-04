@@ -1,8 +1,11 @@
-import '../bin/factoryClass.dart';
-class Imported implements ItemPrice{
+import '../bin/FactoryClass.dart';
+import '../bin/Item.dart';
+class Imported extends Item{
+  Imported(String name, double prize, int quantity, String type) : super(name, prize, quantity, type);
+
   @override
-  double taxCalculator(String type,int quantity,double price){
-    var itemCost = quantity * price;
+  double taxCalculator(String type,int quantity,double prize){
+    var itemCost = quantity * prize;
     var salesTax = 0.0;
     if (itemCost == 0.0) {
       return salesTax;
@@ -20,8 +23,8 @@ class Imported implements ItemPrice{
     return salesTax;
   }
   @override
-  double finalPriceCalculate(double salesTax, int quantity, double price){
-    var itemCost = quantity * price;
+  double finalPrizeCalculate(double salesTax, int quantity, double prize){
+    var itemCost = quantity * prize;
     var totalCost = itemCost + salesTax;
     return totalCost;
   }
