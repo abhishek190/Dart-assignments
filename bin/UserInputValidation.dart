@@ -23,13 +23,41 @@ dynamic convertDataType(var x) {
 
 //Datatype assign
 dynamic typeAssign(dynamic check,var l,var m, var n,dynamic initialValue){
+  if(check=="String"){
+    return stringToEnum(check, l, m, n);
+  }
   return l.runtimeType.toString() == check
       ? l
       : (m.runtimeType.toString() == check
       ? m
       : (n.runtimeType.toString() == check ? n : initialValue));
 }
+//Check enum type
+Type checkEnumType(var x){
+  if(x==Type.raw.toShortString()) {
+    return Type.raw;
+  }
+  else if(x==Type.manufactured.toShortString()) {
+    return Type.manufactured;
+  }
+  else{
+    return Type.imported;
+  }
 
+
+}
+//String to enumType
+Type stringToEnum(dynamic check,var l,var m, var n){
+  if(l=="String"){
+    return checkEnumType(l);
+  }
+  else if(m=="String"){
+    return checkEnumType(m);
+  }
+  else{
+    return checkEnumType(n);
+  }
+}
 
 //Check Input is valid or not
 bool checkInputValidation(var name, var x, var y, var z) {

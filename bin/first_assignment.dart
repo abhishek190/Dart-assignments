@@ -1,8 +1,8 @@
 import 'dart:io';
 import '../bin/UserInputValidation.dart';
-import '../bin/UserTaxCalculator.dart';
 import '../bin/exceptionHandle.dart';
 import 'enum.dart';
+import '../bin/factoryClass.dart';
 //class Item
 class Item {
   late String name;
@@ -45,7 +45,7 @@ void main() {
       if (checkInputValidation(name, l, m, n)) {
         double price;
         int quantity;
-        String type;
+        Type type;
 
         //price , quantity and type assigned with correct dataType
         price= typeAssign(checkType.double.type,l,m,n,checkType.double.value);
@@ -54,17 +54,23 @@ void main() {
 
         type= typeAssign(checkType.string.type,l,m,n,checkType.string.value);
 
-        //Sales Tax Calculate
-        var salesTax = taxCalculator(type, quantity, price);
+          //factory class instance
+          final tax = ItemPrice(type);
 
-        //final prize calculate
-        var finalPrize = finalPriceCalculate(salesTax, quantity, price);
+          //sales Tax calculate
+          var salesTax = tax.taxCalculator(type.toShortString(), quantity, price);
 
-        //item object initialize
-        Item item = Item(name, price, quantity, type, salesTax, finalPrize);
+          //final prize calculate
+          var finalPrize = tax.finalPriceCalculate(salesTax, quantity, price);
 
-        //item object insert to items list
-        items.add(item);
+          //item object initialize
+          Item item = Item(
+              name, price, quantity, type.toShortString(), salesTax,
+              finalPrize);
+
+          //item object insert to items list
+          items.add(item);
+
       } else {
         //Invalid input exception throw
         throw InvalidInputException();
