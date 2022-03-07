@@ -37,7 +37,10 @@ void main() {
       n = convertDataType(z);
 
       //Check input is valid or not
-      if (checkInputValidation(name, l, m, n)) {
+      try{
+        if (!checkInputValidation(name, l, m, n)) {
+          throw ValueException();
+        }
         double prize;
         int quantity;
         Type type;
@@ -61,21 +64,25 @@ void main() {
           item.add("item name $name\nitem prize $prize\nsales tax liability per item $salesTax\nfinal prize $finalPrize");
 
 
-      } else {
+      } catch(e) {
         //Invalid input exception throw
-        throw InvalidInputException();
+        print(ValueException().iOException());
       }
     }
     print("Do you want to enter details of any other item (y/n):");
     do {
       flag = stdin.readLineSync();
-      if (flag != null) {
-        flag = flag.toLowerCase();
+      flag = flag?.toLowerCase();
+      try{
+        if (flag != "n" && flag != "y") {
+          throw ValueException();
+        }
       }
-      if (flag != "n" && flag != "y") {
-        print("Wrong options... Please select (y/n)");
+      catch(e){
+        print(ValueException().iOException());
       }
     } while (flag != "n" && flag != "y");
+
   } while (flag == "y");
 
   for(int i=0;i<item.length;i++){
