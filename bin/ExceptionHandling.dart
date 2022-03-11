@@ -3,7 +3,8 @@ class ValueException implements Exception {
   String invalidNode() => 'Invalid Node';
   String invalidParentNode()=>'Invalid Parent Node';
   String inputRollNotFound() => 'Invalid Roll No';
-  String childNodeNotFound()=>'Child Node not found';
-  String parentNotFound()=>'Parent Node not found';
-  String dependencyNotFound()=>'Dependencies not found';
+  String childNodeNotFound()=>'Child Node not exist';
+  String parentNotFound()=>'Parent Node not exist';
+  String dependencyNotFound()=>'Dependencies not exist';
+  String nodeExist()=>'Duplicate node found';
 }

@@ -3,7 +3,9 @@ class Node {
   late String name;
   late Map<String?, String?> info;
   Node(this.id, this.name, this.info);
-  void display(){
-    print('$id   $name');
+  @override
+  String toString() {
+    // TODO: implement toString
+    return id;
   }
 }

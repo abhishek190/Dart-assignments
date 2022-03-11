@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:io';
 import 'ExceptionHandling.dart';
 
 class PrimitiveWrapper {
@@ -7,6 +8,13 @@ class PrimitiveWrapper {
   late List<dynamic> descendant;
 
   PrimitiveWrapper(this.visited, this.recStack, this.descendant);
+}
+//isNumceric
+bool isNumeric(String s) {
+  if (s == null) {
+    return false;
+  }
+  return double.tryParse(s) != null;
 }
 //Cycle check function
 bool ifCycle(Map<dynamic, dynamic> graph) {
@@ -56,10 +64,12 @@ void graphDisplay(Map<dynamic, dynamic> graph) {
     }
     graph.forEach((key, value) {
       if (value.length != 0) {
-        key.display();
-        print("---->");
-        for (var element in value) {
-          element.display();
+        stdout.write(key);
+        stdout.write('-->');
+
+        for(int i=0;i<value.length;i++){
+          stdout.write(value[i]);
+          stdout.write("  ");
         }
         print('\n');
       }
@@ -68,33 +78,22 @@ void graphDisplay(Map<dynamic, dynamic> graph) {
     print(ValueException().dependencyNotFound());
   }
 }
-//Find Descendant
-List<dynamic> findDescendant(dynamic nodeId, Map<dynamic, dynamic> graph) {
-  var data = PrimitiveWrapper({}, {}, []);
-  if (graph.isEmpty) {
-    print("Descendant Not Found");
-  }
-  graph.forEach((key, value) {
-    data.visited[key] = false;
-    for (var element in value) {
-      data.visited[element] = false;
-    }
-  });
-  dfs(nodeId, graph, data);
-  return data.descendant;
-
-}
-//Find Descendant function using DFS
-void dfs(dynamic nodeId, Map<dynamic, dynamic> graph, PrimitiveWrapper data) {
-  data.visited[nodeId] = true;
-  if (graph[nodeId] != null) {
-    for (var element in graph[nodeId]) {
-      if (data.visited[element] == false) {
-        data.descendant.add(element);
-        dfs(element, graph, data);
+//Find Descendant using BFS
+Set<dynamic> findDescendant(dynamic nodeId, Map<dynamic, dynamic> graph) {
+  Set<dynamic> descendant = {};
+  Queue<dynamic> pq = Queue();
+  pq.add(nodeId);
+  while (pq.isEmpty == false) {
+    dynamic top = pq.first;
+    pq.removeFirst();
+    if(graph[top]!=null) {
+      for (var element in graph[top]) {
+        pq.add(element);
+        descendant.add(element);
       }
     }
   }
+  return descendant;
 }
 //Find Ancestor using BFS
 Set<dynamic> findAncestor(Map<dynamic, dynamic> graph, dynamic nodeId) {
