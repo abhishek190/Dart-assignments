@@ -1,1 +1,1 @@
-# Dart-assignments
+A simple command-line application.
