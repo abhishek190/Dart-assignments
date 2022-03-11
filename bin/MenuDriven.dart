@@ -84,12 +84,16 @@ void main(){
             }
 
             Set<dynamic> ancestor = findAncestor(graph, addNewNode[nodeId]);
-            if (ancestor.isEmpty) {
-              print("Ancestor not found");
+            try {
+              if (ancestor.isEmpty) {
+                throw ValueException();
+              }
+              for (var element in ancestor) {
+                print(element);
+              }
             }
-            for (var element in ancestor) {
-              print(element);
-              //element.display();
+            catch(e){
+              print(ValueException().ancestorNotFound());
             }
           }
           catch (e) {
@@ -106,13 +110,16 @@ void main(){
             }
             Set<dynamic> descendant = findDescendant(
                 addNewNode[nodeId], graph);
-            if (descendant.isNotEmpty) {
-              for(var element in descendant){
-                print(element);
+            try {
+              if(descendant.isEmpty){
+                throw ValueException();
               }
+                for (var element in descendant) {
+                  print(element);
+                }
             }
-            else {
-              print("Descendant Not Found");
+            catch(e){
+              print(ValueException().descendantNotFound());
             }
           }
           catch (e) {
@@ -134,6 +141,9 @@ void main(){
                 throw ValueException();
               }
               graph[addNewNode[parentId]].remove(addNewNode[childNodeId]);
+              if(graph[addNewNode[parentId]].length==0){
+                graph.remove(addNewNode[parentId]);
+              }
             }
             catch (e) {
               print(ValueException().childNodeNotFound());

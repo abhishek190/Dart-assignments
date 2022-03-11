@@ -62,8 +62,10 @@ void graphDisplay(Map<dynamic, dynamic> graph) {
     if (graph.isEmpty) {
       throw ValueException();
     }
+    int count=0;
     graph.forEach((key, value) {
       if (value.length != 0) {
+        count=1;
         stdout.write(key);
         stdout.write('-->');
 
@@ -72,6 +74,14 @@ void graphDisplay(Map<dynamic, dynamic> graph) {
           stdout.write("  ");
         }
         print('\n');
+      }
+      try {
+        if (count == 0) {
+          throw ValueException();
+        }
+      }
+      catch(e){
+        print(ValueException().dependencyNotFound());
       }
     });
   } catch (e) {
