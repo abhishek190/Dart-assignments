@@ -1,8 +1,10 @@
+//import 'dart:html';
 import 'dart:io';
 import '../bin/StudentInfo.dart';
 import '../bin/CourseInfo.dart';
 import '../bin/ExceptionHandling.dart';
 import '../bin/UserJsonSerializable.dart';
+import 'Enum.dart';
 import 'UtilityClass.dart';
 import 'File.dart';
 
@@ -14,7 +16,7 @@ Future<void> main() async {
   if (await file.exists()) {
     var contents = await file.readAsString();
     if (contents.isNotEmpty) {
-      userDetails.add(readFile(contents)!);
+      userDetails=readFile(contents);
     }
   }
 
@@ -32,19 +34,42 @@ Future<void> main() async {
         print("Enter Student Details:");
         print("Student Full Name: ");
         fullName = stdin.readLineSync();
-        print("Student age: ");
-        age = stdin.readLineSync();
+        bool ageValidationCheck=false;
+        do{
+          print("Student age: ");
+          age = stdin.readLineSync();
+          try{
+            if(!intValidation(age)){
+              throw ValueException;
+            }
+            ageValidationCheck=true;
+          }
+          catch(e){
+            print(ValueException().IOException());
+          }
+        }while(ageValidationCheck==false);
         print("Student address: ");
         address = stdin.readLineSync();
-        print("Student Roll no: ");
-        roll = stdin.readLineSync();
+        bool rollValidationCheck=false;
+        do{
+          print("Student Roll no: ");
+          roll = stdin.readLineSync();
+          try{
+            if(!intValidation(roll)){
+              throw ValueException;
+            }
+            rollValidationCheck=true;
+          }
+          catch(e){
+            print(ValueException().IOException());
+          }
+        }while(rollValidationCheck==false);
+
         //Check Input is valid or not
         try {
           //parsing age and roll No string to int
           if (!intValidation(age) ||
-              !intValidation(roll) ||
-              !stringValidation(fullName) ||
-              !stringValidation(address)) {
+              !intValidation(roll)) {
             //print("Input is not valid");
             throw ValueException();
           }
@@ -89,43 +114,97 @@ Future<void> main() async {
 
         break;
       case '2':
-        print('Sort (Asc/Desc)');
-        String? order = stdin.readLineSync()?.toLowerCase();
-        print('Sort based on (name/Roll/age/address)');
-        String? sortBasedOn = stdin.readLineSync()?.toLowerCase();
         try {
-          if ((order != 'asc' && order != 'desc') ||
-              sortBasedOn != 'name' &&
-                  sortBasedOn != 'roll' &&
-                  sortBasedOn != 'age' &&
-                  sortBasedOn != 'address') {
+          if(userDetails.isEmpty){
             throw ValueException();
           }
-          sortUser(userDetails, sortBasedOn!, order);
-        } catch (e) {
-          print(ValueException().IOException());
+          displayUserDetails(userDetails);
+          String? check='n';
+          do {
+            print("Want to sort? (y/n)");
+            check = stdin.readLineSync();
+
+            check = check?.toLowerCase();
+            try {
+              if (check != 'y' && check != 'n') {
+                throw ValueException();
+              }
+            } catch (e) {
+              print(ValueException().IOException());
+            }
+          } while (check != 'y' && check != 'n');
+          if(check=='y') {
+            print('Sort (Asc/Desc)');
+            String? order = stdin.readLineSync()?.toLowerCase();
+            if(order=='a'){order='asc';}
+            if(order=='d' || order=='des'){order='desc';}
+            try {
+              if (order != 'asc' && order != 'desc') {
+                throw ValueException();
+              }
+              print('Sort based on (name/Roll/age/address)');
+              String? sortBasedOnInput=stdin.readLineSync();
+              dynamic sortBasedOn;
+              if(intValidation(sortBasedOnInput)==true){
+                sortBasedOn=int.tryParse(sortBasedOnInput!);
+              }
+              else {
+                sortBasedOn = sortBasedOnInput?.toLowerCase();
+              }
+              bool sortValidation=false;
+              for(var element in SortName.values){
+                if(sortBasedOn==element.toShortString() || sortBasedOn==element.value){
+                  print(element.toShortString());
+                  sortBasedOn=element.toShortString();
+                  sortValidation=true;
+                }
+              }
+              try {
+                if (sortValidation == false) {
+                    throw ValueException();
+                }
+                sortUser(userDetails, sortBasedOn!, order);
+              }
+              catch(e){
+                print(ValueException().IOException());
+              }
+            } catch (e) {
+              print(ValueException().IOException());
+            }
+          }
+        }
+        catch(e){
+          print(ValueException().NoUserFound());
         }
 
         break;
 
       case '3':
-        print("Enter roll number: ");
-        int userRollNo = int.parse(stdin.readLineSync()!);
-        int index = -1;
-        for (int i = 0; i < userDetails.length; i++) {
-          if (userDetails[i].rollNo == userRollNo) {
-            index = i;
-            break;
-          }
-        }
         try {
-          if (index == -1) {
+          if(userDetails.isEmpty){
             throw ValueException();
           }
-          dynamic res = userDetails.removeAt(index);
-          print("User with roll No $userRollNo deleted successfully");
-        } catch (e) {
-          print(ValueException().InputRollNotFound());
+          print("Enter roll number: ");
+          int userRollNo = int.parse(stdin.readLineSync()!);
+          int index = -1;
+          for (int i = 0; i < userDetails.length; i++) {
+            if (userDetails[i].rollNo == userRollNo) {
+              index = i;
+              break;
+            }
+          }
+          try {
+            if (index == -1) {
+              throw ValueException();
+            }
+            dynamic res = userDetails.removeAt(index);
+            print("User with roll No $userRollNo deleted successfully");
+          } catch (e) {
+            print(ValueException().InputRollNotFound());
+          }
+        }
+        catch(e){
+          print(ValueException().NoUserFound());
         }
 
         break;
@@ -151,16 +230,18 @@ Future<void> main() async {
       default:
         print("Wrong option");
     }
-    print("Want to continue (y/n)");
-    flag = stdin.readLineSync();
+    do {
+      print("Want to continue (y/n)");
+      flag = stdin.readLineSync();
 
-    flag = flag?.toLowerCase();
-    try {
-      if (flag != 'y' && flag != 'n') {
-        throw ValueException();
+      flag = flag?.toLowerCase();
+      try {
+        if (flag != 'y' && flag != 'n') {
+          throw ValueException();
+        }
+      } catch (e) {
+        print(ValueException().IOException());
       }
-    } catch (e) {
-      print(ValueException().IOException());
-    }
+    } while (flag != 'y' && flag != 'n');
   } while (flag == 'y');
 }

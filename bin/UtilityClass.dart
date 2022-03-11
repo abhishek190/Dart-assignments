@@ -46,9 +46,21 @@ bool courseValidation(List<String> course, String currentCourse) {
   }
   return true;
 }
-
+void displayUserDetails(List<StudentDetails> userDetails){
+  print(
+      '-----------------------------------------------------------------------------------');
+  print(
+      'Name         Roll Number            Address                   Courses');
+  print(
+      '-----------------------------------------------------------------------------------');
+  for (int i = 0; i < userDetails.length; i++) {
+    List<String> courses = listOfObjectToString(userDetails[i].course);
+    String course = courses.join(",");
+    userDetails[i].display(course);
+  }
+}
 void sortUser(List<StudentDetails> userDetails,
-    [String type = "name", order = "asc"]) {
+    [dynamic type = "name", order = "asc"]) {
   switch (type) {
     case "name":
       userDetails.sort((a, b) => a.fullName.compareTo(b.fullName) == 0
@@ -68,15 +80,5 @@ void sortUser(List<StudentDetails> userDetails,
   if (order == 'desc') {
     userDetails = List.from(userDetails.reversed);
   }
-  print(
-      '-----------------------------------------------------------------------------------');
-  print(
-      'Name         Roll Number            Address                   Courses');
-  print(
-      '-----------------------------------------------------------------------------------');
-  for (int i = 0; i < userDetails.length; i++) {
-    List<String> courses = listOfObjectToString(userDetails[i].course);
-    String course = courses.join(",");
-    userDetails[i].display(course);
-  }
+  displayUserDetails(userDetails);
 }
