@@ -1,0 +1,254 @@
+import 'dart:io';
+import 'ExceptionHandling.dart';
+import 'Graph.dart';
+import 'UtilityClass.dart';
+void main(){
+  String? flag='y';
+  Map<String,Node?> addNewNode={};
+  Map<dynamic, dynamic> graph={};
+  do {
+    print("1: Immediate parents of node\n2: Immediate children of node\n3: Ancestors of a node\n4: Descendants of a node");
+    print("5: Delete dependency from tree\n6: Delete node from tree\n7: Add new dependency\n8: Add new Node\n9: Check all dependency");
+    try {
+      var typeInput = stdin.readLineSync();
+      if(isNumeric(typeInput!)==false){
+        throw ValueException();
+      }
+      var type=int.parse(typeInput);
+      switch (type) {
+        case 1:
+          print("Enter Node Id");
+          String? nodeId = stdin.readLineSync();
+          try {
+            if (graph.containsKey(addNewNode[nodeId]) == false &&
+                addNewNode.containsKey(nodeId) == false) {
+              throw ValueException;
+            }
+            List<dynamic>immediateParent = [];
+            graph.forEach((key, value) {
+              if (value.contains(addNewNode[nodeId])) {
+                immediateParent.add(key);
+              }
+            });
+            try {
+              if (immediateParent.isEmpty == false) {
+                for (var element in immediateParent) {
+                  print(element);
+                }
+              }
+              else {
+                throw ValueException;
+              }
+            }
+            catch (e) {
+              print(ValueException().parentNotFound());
+            }
+          }
+          catch (e) {
+            print(ValueException().invalidNode());
+          }
+          break;
+        case 2:
+          print("Enter Node Id");
+          String? nodeId = stdin.readLineSync();
+          try {
+            if (graph.containsKey(addNewNode[nodeId]) == false &&
+                addNewNode.containsKey(nodeId) == false) {
+              throw ValueException;
+            }
+            try {
+              List<dynamic> children = graph[addNewNode[nodeId]];
+              if (children.isEmpty) {
+                throw ValueException;
+              }
+              for (var element in children) {
+                print(element);
+                //element.display();
+              }
+            }
+            catch (e) {
+              print(ValueException().childNodeNotFound());
+            }
+          }
+          catch (e) {
+            print(ValueException().invalidNode());
+          }
+          break;
+        case 3:
+          print("Enter Node Id");
+          String? nodeId = stdin.readLineSync();
+          try {
+            if (graph.containsKey(addNewNode[nodeId]) == false &&
+                addNewNode.containsKey(nodeId) == false) {
+              throw ValueException;
+            }
+
+            Set<dynamic> ancestor = findAncestor(graph, addNewNode[nodeId]);
+            try {
+              if (ancestor.isEmpty) {
+                throw ValueException();
+              }
+              for (var element in ancestor) {
+                print(element);
+              }
+            }
+            catch(e){
+              print(ValueException().ancestorNotFound());
+            }
+          }
+          catch (e) {
+            print(ValueException().invalidNode());
+          }
+          break;
+        case 4:
+          print("Enter Node Id");
+          String? nodeId = stdin.readLineSync();
+          try {
+            if (graph.containsKey(addNewNode[nodeId]) == false &&
+                addNewNode.containsKey(nodeId) == false) {
+              throw ValueException;
+            }
+            Set<dynamic> descendant = findDescendant(
+                addNewNode[nodeId], graph);
+            try {
+              if(descendant.isEmpty){
+                throw ValueException();
+              }
+                for (var element in descendant) {
+                  print(element);
+                }
+            }
+            catch(e){
+              print(ValueException().descendantNotFound());
+            }
+          }
+          catch (e) {
+            print(ValueException().invalidNode());
+          }
+          break;
+        case 5:
+          print("Enter Parent Id");
+          String? parentId = stdin.readLineSync();
+          try {
+            if (graph.containsKey(addNewNode[parentId]) == false) {
+              throw ValueException;
+            }
+            print("Enter child Node Id");
+            String? childNodeId = stdin.readLineSync();
+            List<dynamic>check = graph[addNewNode[parentId]];
+            try {
+              if (check.contains(addNewNode[childNodeId]) == false) {
+                throw ValueException();
+              }
+              graph[addNewNode[parentId]].remove(addNewNode[childNodeId]);
+              if(graph[addNewNode[parentId]].length==0){
+                graph.remove(addNewNode[parentId]);
+              }
+            }
+            catch (e) {
+              print(ValueException().childNodeNotFound());
+            }
+          }
+          catch (e) {
+            print(ValueException().invalidParentNode());
+          }
+
+
+          break;
+        case 6:
+          print("Enter Node id");
+          String? nodeId = stdin.readLineSync();
+          try {
+            if(graph.containsKey(addNewNode[nodeId])==false && addNewNode.containsKey(nodeId)==false){
+              throw ValueException();
+            }
+            if (graph.containsKey(addNewNode[nodeId])) {
+              graph.remove(addNewNode[nodeId]);
+            }
+            addNewNode.remove(nodeId);
+          }
+          catch(e){
+            print(ValueException().invalidNode());
+          }
+          break;
+        case 7:
+          print("Enter Parent Id");
+          String? parentId = stdin.readLineSync();
+          try {
+            if (addNewNode.containsKey(parentId) == false) {
+              throw ValueException;
+            }
+            print("Enter Child Id");
+            String? childId = stdin.readLineSync();
+            try {
+              if (addNewNode.containsKey(childId) == false) {
+                throw ValueException();
+              }
+              List<Node?> obj = [];
+              if (graph.containsKey(addNewNode[parentId])) {
+                obj = graph[addNewNode[parentId]];
+              }
+              obj.add(addNewNode[childId]);
+              graph[addNewNode[parentId]] = obj;
+              if (ifCycle(graph) == true) {
+                print("Cycle dependency found");
+                obj.removeLast();
+                graph[addNewNode[parentId]] = obj;
+              }
+            }
+            catch (e) {
+              print(ValueException().childNodeNotFound());
+            }
+          }
+          catch (e) {
+            print(ValueException().invalidParentNode());
+          }
+
+          break;
+        case 8:
+          print("Add Node Id");
+          String? id = stdin.readLineSync();
+          try {
+            if (addNewNode.containsKey(id)) {
+              throw ValueException();
+            }
+            print("Add Node Name");
+            String? name = stdin.readLineSync();
+            print("Add additional Info in key-value pair");
+            String? key = stdin.readLineSync();
+            String? value = stdin.readLineSync();
+            Node newNode = Node(id!, name!, {key: value});
+            addNewNode[id] = newNode;
+
+            addNewNode.forEach((key, value) {
+              print(key);
+            });
+          }
+          catch (e) {
+            print(ValueException().nodeExist());
+          }
+          break;
+        case 9:
+          graphDisplay(graph);
+          break;
+        default:
+          print("Wrong option");
+      }
+      do {
+        print("Want to continue(y/n)");
+        flag = stdin.readLineSync();
+        flag = flag?.toLowerCase();
+        try {
+          if (flag != 'y' && flag != 'n') {
+            throw ValueException();
+          }
+        } catch (e) {
+          print(ValueException().iOException());
+        }
+      } while (flag != 'y' && flag != 'n');
+    }
+    catch(e){
+      print(ValueException().iOException());
+    }
+  }while(flag!='n');
+}
